@@ -1,0 +1,45 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity" >
+
+    <TextView
+        android:id="@+id/MagnStrength"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+    <TextView
+        android:id="@+id/xMagn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+        
+    <TextView
+        android:id="@+id/yMagn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+            
+    <TextView
+        android:id="@+id/zMagn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+    
+	<EditText android:id="@+id/msg_box" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:lines="1"
+		android:inputType="text" android:text="@string/default_msg" />
+    
+    <TextView android:id="@+id/logs" android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:gravity="bottom"
+		android:scrollbars="vertical" android:text="" />
+
+</LinearLayout>

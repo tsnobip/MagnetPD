@@ -13,7 +13,7 @@
 #X obj 132 217 sel 1;
 #X obj 339 17 r freq;
 #X obj 391 171 sig~;
-#X obj 365 121 * 20;
+#X obj 266 137 * 20;
 #X obj 355 89 line;
 #X obj 342 41 t b f;
 #X msg 379 65 100;

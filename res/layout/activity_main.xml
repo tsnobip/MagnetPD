@@ -9,6 +9,7 @@
         android:id="@+id/mute"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/mute"
         android:checked="false"
         android:onClick="mute"/>
 

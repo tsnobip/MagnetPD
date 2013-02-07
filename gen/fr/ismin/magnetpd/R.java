@@ -54,6 +54,7 @@ public final class R {
         public static final int default_msg=0x7f070011;
         public static final int hello_world=0x7f07000f;
         public static final int menu_settings=0x7f070010;
+        public static final int mute=0x7f070012;
         public static final int pref_key_bufsize_millis=0x7f07000b;
         public static final int pref_key_inchannels=0x7f070005;
         public static final int pref_key_outchannels=0x7f070008;

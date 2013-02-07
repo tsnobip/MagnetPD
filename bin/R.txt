@@ -29,6 +29,7 @@ int string app_name 0x7f07000e
 int string default_msg 0x7f070011
 int string hello_world 0x7f07000f
 int string menu_settings 0x7f070010
+int string mute 0x7f070012
 int string pref_key_bufsize_millis 0x7f07000b
 int string pref_key_inchannels 0x7f070005
 int string pref_key_outchannels 0x7f070008

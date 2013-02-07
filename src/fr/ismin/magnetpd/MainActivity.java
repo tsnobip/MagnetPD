@@ -1,5 +1,5 @@
 /*
- * Created by Paul Tsnobiladz�, Johan Delouche and Fran�ois Parra
+ * Created by Paul Tsnobiladz�, Johan Delouche and Fran�ois Parra
  */
 
 package fr.ismin.magnetpd;
@@ -34,6 +34,7 @@ import android.preference.PreferenceManager;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -124,7 +125,7 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 	/************************************************************************/
 	/** Manage life cycle ******************************************************/
 	/***********************************************************************/
-	/** Appelé à la création de l’activité. */
+	/** Appel�� �� la cr��ation de l���activit��. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -139,10 +140,10 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 		logs.setMovementMethod(new ScrollingMovementMethod());
 		msg = (EditText) findViewById(R.id.msg_box);
 		msg.setOnEditorActionListener(this);
-		// Gérer les capteurs :
+		// G��rer les capteurs :
 		// Instancier le gestionnaire des capteurs, le SensorManager
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-		// Instancier l’accéléromètre
+		// Instancier l���acc��l��rom��tre
 		EMCaptor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 		// PureData
 		
@@ -159,7 +160,7 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 	 * @see android.app.Activity#onPause() */
 	@Override
 	protected void onPause() {
-		// unregister the sensor (désenregistrer le capteur)
+		// unregister the sensor (d��senregistrer le capteur)
 		sensorManager.unregisterListener(this, EMCaptor);
 		super.onPause();
 	}
@@ -171,11 +172,11 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 	 */
 	@Override
 	protected void onResume() {
-		/* Ce qu’en dit Google dans le cas de l’accéléromètre :
-		 * «  Ce n’est pas nécessaire d’avoir les évènements des capteurs à un rythme trop rapide.
+		/* Ce qu���en dit Google dans le cas de l���acc��l��rom��tre :
+		 * ��  Ce n���est pas n��cessaire d���avoir les ��v��nements des capteurs �� un rythme trop rapide.
 		 * En utilisant un rythme moins rapide (SENSOR_DELAY_UI), nous obtenons un filtre
-		 * automatique de bas-niveau qui "extrait" la gravité  de l’accélération.
-		 * Un autre bénéfice étant que l’on utilise moins d’énergie et de CPU. »
+		 * automatique de bas-niveau qui "extrait" la gravit��  de l���acc��l��ration.
+		 * Un autre b��n��fice ��tant que l���on utilise moins d�����nergie et de CPU. ��
 		 */
 		sensorManager.registerListener(this, EMCaptor, SensorManager.SENSOR_DELAY_UI);
 		super.onResume();
@@ -190,13 +191,13 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 	 */
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-		// Rien à faire la plupart du temps
+		// Rien �� faire la plupart du temps
 	}
 
 	public void onSensorChanged(SensorEvent event) {
-		// Lire les données quand elles correspondent à notre capteur:
+		// Lire les donn��es quand elles correspondent �� notre capteur:
 		if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-			// Valeur du vecteur du champ magnétique (x,y,z)
+			// Valeur du vecteur du champ magn��tique (x,y,z)
 			xMagnetic = event.values[0];
 			yMagnetic = event.values[1];
 			zMagnetic = event.values[2];
@@ -205,7 +206,7 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 					(xMagnetic*xMagnetic+
 							yMagnetic*yMagnetic+
 							zMagnetic*zMagnetic));
-			// faire quelque chose, demander à mettre à jour l’IHM, par exemple :
+			// faire quelque chose, demander �� mettre �� jour l���IHM, par exemple :
 			redraw();
 			PdBase.sendFloat("freq",(float) (magneticStrength));
 		}
@@ -349,7 +350,7 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 		startAudio();
 	}
 	
-	public void mute() {
+	public void mute(View v) {
 		if (mute.isChecked()) {
 			PdBase.sendFloat("mute", 0);
 		} 

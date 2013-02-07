@@ -1,8 +1,8 @@
 /*
- * Created by Paul Tsnobiladz and Johan Delouche with the participation of Franois Parra
+ * Created by Paul Tsnobiladzï¿½ and Johan Delouche with the participation of Franï¿½ois Parra
  */
 
-package fr.ismin.magnedpd;
+package fr.ismin.magnetpd;
 
 import java.io.File;
 import java.io.IOException;

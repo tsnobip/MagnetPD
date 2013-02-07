@@ -4,33 +4,37 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity" >
+    
+    <CheckBox 
+        android:id="@+id/mute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/mute"
+        android:checked="false"
+        android:onClick="mute"/>
 
     <TextView
         android:id="@+id/MagnStrength"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceLarge" />
     
     <TextView
         android:id="@+id/xMagn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceLarge" />
         
     <TextView
         android:id="@+id/yMagn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceLarge" />
             
     <TextView
         android:id="@+id/zMagn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceLarge" />
     
     
@@ -41,5 +45,7 @@
     <TextView android:id="@+id/logs" android:layout_width="fill_parent"
 		android:layout_height="fill_parent" android:gravity="bottom"
 		android:scrollbars="vertical" android:text="" />
+    
+    
 
 </LinearLayout>

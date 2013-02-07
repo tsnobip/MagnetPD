@@ -1,5 +1,5 @@
 /*
- * Created by Paul Tsnobiladz�, Johan Delouche and Fran�ois Parra
+ * Created by Paul Tsnobiladzé, Johan Delouche and François Parra
  */
 
 package fr.ismin.magnetpd;
@@ -47,6 +47,7 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 	SensorManager sensorManager;
 
 	Sensor EMCaptor;
+	Sensor AccelerometerCaptor;
 
 	private float xMagnetic = 0;
 	private float yMagnetic = 0;
@@ -58,6 +59,8 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 	private TextView xMagnTextView;
 	private TextView yMagnTextView;
 	private TextView zMagnTextView;
+	
+	
 	
 	private EditText msg;
 
@@ -140,13 +143,13 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 		logs.setMovementMethod(new ScrollingMovementMethod());
 		msg = (EditText) findViewById(R.id.msg_box);
 		msg.setOnEditorActionListener(this);
-		// G��rer les capteurs :
+		// Gérer les capteurs :
 		// Instancier le gestionnaire des capteurs, le SensorManager
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-		// Instancier l���acc��l��rom��tre
+		// Instancier l'acc��l��rom��tre
 		EMCaptor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+		AccelerometerCaptor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		// PureData
-		
 		PdPreferences.initPreferences(getApplicationContext());
 		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).registerOnSharedPreferenceChangeListener(this);
 		bindService(new Intent(this, PdService.class), pdConnection, BIND_AUTO_CREATE);
@@ -162,6 +165,7 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 	protected void onPause() {
 		// unregister the sensor (d��senregistrer le capteur)
 		sensorManager.unregisterListener(this, EMCaptor);
+		sensorManager.unregisterListener(this, AccelerometerCaptor);
 		super.onPause();
 	}
 
@@ -179,6 +183,7 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 		 * Un autre b��n��fice ��tant que l���on utilise moins d�����nergie et de CPU. ��
 		 */
 		sensorManager.registerListener(this, EMCaptor, SensorManager.SENSOR_DELAY_UI);
+		sensorManager.registerListener(this, AccelerometerCaptor, SensorManager.SENSOR_DELAY_UI);
 		super.onResume();
 	}
 	/********************************************************************/
@@ -209,6 +214,13 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 			// faire quelque chose, demander �� mettre �� jour l���IHM, par exemple :
 			redraw();
 			PdBase.sendFloat("freq",(float) (magneticStrength));
+		}
+		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+			
+			float acceX = event.values[0];
+            float acceY = event.values[1];
+            float acceZ = event.values[2];
+            
 		}
 	}
 

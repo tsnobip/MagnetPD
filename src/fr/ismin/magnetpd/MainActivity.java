@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD:src/fr/ismin/magnetpd/MainActivity.java
  * Created by Paul Tsnobiladzï¿½ and Johan Delouche with the participation of Franï¿½ois Parra
+=======
+ * Created by Paul TsnobiladzŽ, Johan Delouche and Franois Parra
+>>>>>>> Commit:src/fr/ismin/magnedpd/MainActivity.java
  */
 
 package fr.ismin.magnetpd;
@@ -28,6 +32,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -43,6 +48,8 @@ import fr.ismin.magnetpd.R;
 public class MainActivity extends Activity implements SensorEventListener, OnEditorActionListener,SharedPreferences.OnSharedPreferenceChangeListener {
 
 	SensorManager sensorManager;
+	
+	MediaRecorder mediaRecord;
 
 	Sensor EMCaptor;
 

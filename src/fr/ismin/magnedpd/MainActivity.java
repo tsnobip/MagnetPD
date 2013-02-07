@@ -1,4 +1,4 @@
-package fr.ismin;
+package fr.ismin.magnedpd;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +13,6 @@ import org.puredata.android.service.PdService;
 import org.puredata.core.PdBase;
 import org.puredata.core.PdReceiver;
 import org.puredata.core.utils.IoUtils;
-
-import com.example.pe.R;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -36,6 +34,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+import fr.ismin.magnetpd.R;
 
 public class MainActivity extends Activity implements SensorEventListener, OnEditorActionListener,SharedPreferences.OnSharedPreferenceChangeListener {
 

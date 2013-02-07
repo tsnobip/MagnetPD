@@ -1,5 +1,5 @@
 /*
- * Created by Paul TsnobiladzÔøΩ and Johan Delouche with the participation of FranÔøΩois Parra
+ * Created by Paul Tsnobiladzé, Johan Delouche and François Parra
  */
 
 package fr.ismin.magnetpd;
@@ -34,6 +34,7 @@ import android.preference.PreferenceManager;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -50,7 +51,8 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 	private float yMagnetic = 0;
 	private float zMagnetic = 0;
 	private double magneticStrength = 0;
-
+	
+	private CheckBox mute;
 	private TextView magnStrengthTextView;
 	private TextView xMagnTextView;
 	private TextView yMagnTextView;
@@ -128,6 +130,7 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_main);
+		mute = ((CheckBox) findViewById(R.id.mute));
 		magnStrengthTextView = ((TextView) findViewById(R.id.MagnStrength));
 		xMagnTextView = ((TextView) findViewById(R.id.xMagn));
 		yMagnTextView = ((TextView) findViewById(R.id.yMagn));
@@ -149,6 +152,8 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 		PdBase.sendFloat("vol",0.5f);
 		post("test logs");
 		toast("test toast");
+		
+		
 	}
 	/* * (non-Javadoc) *
 	 * @see android.app.Activity#onPause() */
@@ -342,6 +347,15 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		startAudio();
+	}
+	
+	public void mute() {
+		if (mute.isChecked()) {
+			PdBase.sendFloat("mute", 0);
+		} 
+		else {
+			PdBase.sendFloat("mute", 1);
+		}
 	}
 
 

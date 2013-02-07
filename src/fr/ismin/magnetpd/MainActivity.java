@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
 
@@ -55,12 +56,14 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 	private TextView xMagnTextView;
 	private TextView yMagnTextView;
 	private TextView zMagnTextView;
-	
 	private EditText msg;
 
 	private TextView logs;
 	
 	private static final String TAG = "Theremin Test";
+	
+	private Calendar calendar = Calendar.getInstance(); 
+	private float time;
 	
 	private PdService pdService = null;
 	
@@ -126,30 +129,25 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		setContentView(R.layout.activity_main);
-		magnStrengthTextView = ((TextView) findViewById(R.id.MagnStrength));
-		xMagnTextView = ((TextView) findViewById(R.id.xMagn));
-		yMagnTextView = ((TextView) findViewById(R.id.yMagn));
-		zMagnTextView = ((TextView) findViewById(R.id.zMagn));
-		logs = ((TextView) findViewById(R.id.logs));
-		logs.setMovementMethod(new ScrollingMovementMethod());
-		msg = (EditText) findViewById(R.id.msg_box);
-		msg.setOnEditorActionListener(this);
+		initGUI();
 		// Gérer les capteurs :
+		initSensors();
+		// PureData
+		initPDFunctions();
+	}
+	
+	/********************************************************************/
+	/** Sensor functions*************************************************/
+	/********************************************************************/
+	
+	protected void initSensors(){
 		// Instancier le gestionnaire des capteurs, le SensorManager
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		// Instancier l’accéléromètre
 		EMCaptor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-		// PureData
-		
-		PdPreferences.initPreferences(getApplicationContext());
-		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).registerOnSharedPreferenceChangeListener(this);
-		bindService(new Intent(this, PdService.class), pdConnection, BIND_AUTO_CREATE);
-		PdBase.sendFloat("vol",0.5f);
-		post("test logs");
-		toast("test toast");
+		time = calendar.getTime().getTime();
 	}
+	
 	/* * (non-Javadoc) *
 	 * @see android.app.Activity#onPause() */
 	@Override
@@ -202,10 +200,29 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 							zMagnetic*zMagnetic));
 			// faire quelque chose, demander à mettre à jour l’IHM, par exemple :
 			redraw();
+//			PdBase.sendFloat("deltatime",(float) (event.timestamp - time)/1000000);
+//			System.out.println("delta time: "+(event.timestamp - time)/1000000);
+//			time = event.timestamp;
 			PdBase.sendFloat("freq",(float) (magneticStrength));
 		}
 	}
 
+	/********************************************************************/
+	/** GUI*************************************************/
+	/********************************************************************/
+	
+	public void initGUI(){
+		setContentView(R.layout.activity_main);
+		magnStrengthTextView = ((TextView) findViewById(R.id.MagnStrength));
+		xMagnTextView = ((TextView) findViewById(R.id.xMagn));
+		yMagnTextView = ((TextView) findViewById(R.id.yMagn));
+		zMagnTextView = ((TextView) findViewById(R.id.zMagn));
+		logs = ((TextView) findViewById(R.id.logs));
+		logs.setMovementMethod(new ScrollingMovementMethod());
+		msg = (EditText) findViewById(R.id.msg_box);
+		msg.setOnEditorActionListener(this);
+	}
+	
 	public void redraw(){
 		magnStrengthTextView.setText("Magnetic Strength: "+ magneticStrength);
 		xMagnTextView.setText("x : "+xMagnetic);
@@ -215,11 +232,18 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 
 	}
 	
-	public void playTheremin(){
 
-	}
 	
-
+	/********************************************************************/
+	/** Pure Data*************************************************/
+	/********************************************************************/
+	
+	protected void initPDFunctions(){
+		PdPreferences.initPreferences(getApplicationContext());
+		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).registerOnSharedPreferenceChangeListener(this);
+		bindService(new Intent(this, PdService.class), pdConnection, BIND_AUTO_CREATE);
+		PdBase.sendFloat("vol",0.5f);
+	}
 	
 	private void initPd() {
 		Resources res = getResources();

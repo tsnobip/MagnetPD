@@ -1,3 +1,7 @@
+/*
+ * Created by Paul Tsnobiladzé and Johan Delouche with the participation of François Parra
+ */
+
 package fr.ismin.magnedpd;
 
 import java.io.File;

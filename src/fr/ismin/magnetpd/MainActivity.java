@@ -24,6 +24,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -36,14 +37,19 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 import fr.ismin.magnetpd.R;
 
-public class MainActivity extends Activity implements SensorEventListener, OnEditorActionListener,SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends Activity implements OnItemSelectedListener,SensorEventListener, OnEditorActionListener,SharedPreferences.OnSharedPreferenceChangeListener {
 
 	SensorManager sensorManager;
 
@@ -60,10 +66,13 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 	private TextView xMagnTextView;
 	private TextView yMagnTextView;
 	private TextView zMagnTextView;
-
-	private EditText msg;
-
+//	private EditText msg;
 	private TextView logs;
+	
+	AssetManager assetMgr;
+	private Spinner patchSelector;
+	private ArrayAdapter<String> spinnerAdapter;
+	private ArrayList<String> patchList;
 	
 	private static final String TAG = "Theremin Test";
 	
@@ -74,6 +83,7 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 	
 	private Toast toast = null;
 	
+	private int openedPatch;
 	private PdReceiver receiver = new PdReceiver() {
 
 		private void pdPost(String msg) {
@@ -152,13 +162,7 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 		EMCaptor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 //		time = calendar.getTime().getTime();
 		AccelerometerCaptor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		// PureData
-		PdPreferences.initPreferences(getApplicationContext());
-		PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).registerOnSharedPreferenceChangeListener(this);
-		bindService(new Intent(this, PdService.class), pdConnection, BIND_AUTO_CREATE);
-		PdBase.sendFloat("vol",0.5f);
-		post("test logs");
-		toast("test toast");
+
 	}
 	
 	/* * (non-Javadoc) *
@@ -226,6 +230,7 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
             float acceY = event.values[1];
             float acceZ = event.values[2];
             
+            PdBase.sendFloat("balance", acceX);
 		}
 	}
 
@@ -242,8 +247,14 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 		zMagnTextView = ((TextView) findViewById(R.id.zMagn));
 		logs = ((TextView) findViewById(R.id.logs));
 		logs.setMovementMethod(new ScrollingMovementMethod());
-		msg = (EditText) findViewById(R.id.msg_box);
-		msg.setOnEditorActionListener(this);
+//		msg = (EditText) findViewById(R.id.msg_box);
+//		msg.setOnEditorActionListener(this);
+		patchSelector = ((Spinner) findViewById(R.id.patchSelector));
+		patchSelector.setOnItemSelectedListener(this);
+		assetMgr = getAssets(); 
+		patchList = (ArrayList<String>) displayFiles(assetMgr,"patches");
+		spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, patchList);
+		patchSelector.setAdapter(spinnerAdapter);
 	}
 	
 	public void redraw(){
@@ -268,15 +279,32 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 		PdBase.sendFloat("vol",0.5f);
 	}
 	
+	private void initPdWithFile(String path) {
+		File patchFile = null;
+		try {
+			InputStream in = assetMgr.open("patches/"+path);
+			patchFile = IoUtils.extractResource(in, "theremin.pd", getCacheDir());
+			PdBase.closePatch(openedPatch);
+			openedPatch = PdBase.openPatch(patchFile);
+//			startAudio();
+		} catch (IOException e) {
+			Log.e(TAG, e.toString());
+			finish();
+		} finally {
+			if (patchFile != null) patchFile.delete();
+		}
+	}
+	
 	private void initPd() {
-		Resources res = getResources();
+//		Resources res = getResources();
 		File patchFile = null;
 		try {
 			PdBase.setReceiver(receiver);
 			PdBase.subscribe("android");
-			InputStream in = res.openRawResource(R.raw.theremin);
+//			InputStream in = res.openRawResource(R.raw.theremin);
+			InputStream in = assetMgr.open("patches/"+patchList.get(0));
 			patchFile = IoUtils.extractResource(in, "theremin.pd", getCacheDir());
-			PdBase.openPatch(patchFile);
+			openedPatch = PdBase.openPatch(patchFile);
 			startAudio();
 		} catch (IOException e) {
 			Log.e(TAG, e.toString());
@@ -320,7 +348,7 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 	
 	@Override
 	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-		evaluateMessage(msg.getText().toString());
+//		evaluateMessage(msg.getText().toString());
 		return true;
 	}
 
@@ -400,5 +428,34 @@ public class MainActivity extends Activity implements SensorEventListener, OnEdi
 		}
 	}
 
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int pos,
+			long id) {
+		post("opening : "+patchList.get(pos));
+		initPdWithFile(patchList.get(pos));
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private List<String> displayFiles (AssetManager mgr, String path) {
+	    List<String> patchList = null;
+		try {
+	        String list[] = mgr.list(path);
+	        patchList = new ArrayList<String>(Arrays.asList(list));
+	        if (list != null)
+	            for (int i=0; i<list.length; ++i)
+	                {
+	                    Log.v("Assets:", path +"/"+ list[i]);
+	                    displayFiles(mgr, path + "/" + list[i]);
+	                }
+	    } catch (IOException e) {
+	        Log.v("List error:", "can't list" + path);
+	    }
+		return patchList;
+	}
 
 }
